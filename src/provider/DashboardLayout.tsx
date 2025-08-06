@@ -3,7 +3,7 @@ import Menu from "../modules/Menu"
 
 const DashboardLayout = ({children}:{children:ReactNode}) => {
   return (
-    <div className="h-[100vh] relative">
+    <div className="h-[100vh] relative  mt-[20px]">
       {children}
       <Menu/>
     </div>

@@ -1,9 +1,14 @@
 import React from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input, Flex } from 'antd';
+import Login from '../service/Auth';
+import { useCookies } from 'react-cookie';
 
 const LoginPage: React.FC = () => {
+  const [cookie, setCookies] = useCookies(['token'])
   const onFinish = (values: any) => {
+    Login(values, setCookies)
+    console.log(cookie.token)
     console.log('Received values of form: ', values);
   };
 
@@ -15,10 +20,10 @@ const LoginPage: React.FC = () => {
       onFinish={onFinish}
     >
       <Form.Item
-        name="username"
-        rules={[{ required: true, message: 'Please input your Username!' }]}
+        name="login"
+        rules={[{ required: true, message: 'Please input your Login!' }]}
       >
-        <Input prefix={<UserOutlined />} placeholder="Username" />
+        <Input prefix={<UserOutlined />} placeholder="Login" />
       </Form.Item>
       <Form.Item
         name="password"
@@ -39,7 +44,6 @@ const LoginPage: React.FC = () => {
         <Button block type="primary" htmlType="submit">
           Log in
         </Button>
-        or <a href="">Register now!</a>
       </Form.Item>
     </Form>
   );

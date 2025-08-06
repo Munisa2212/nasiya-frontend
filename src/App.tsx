@@ -5,6 +5,7 @@ import AuthRoute from "./routes/auth/AuthRoute"
 
 function App() {
   const [cookies] = useCookies(['token'])
+  // return <Dashboard/>
   return cookies.token ? <Dashboard/> : <AuthRoute/>
 }
 

@@ -1,4 +1,7 @@
 export const Path = {
     main: "/",
-    login: "/login"
+    login: "/login",
+    debtors: "/debtors",
+    reports: "/reports",
+    settings: "/settings"
 }
