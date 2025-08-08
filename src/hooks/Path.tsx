@@ -3,5 +3,6 @@ export const Path = {
     login: "/login",
     debtors: "/debtors",
     reports: "/reports",
-    settings: "/settings"
+    settings: "/settings",
+    debtor: "/debtors"
 }

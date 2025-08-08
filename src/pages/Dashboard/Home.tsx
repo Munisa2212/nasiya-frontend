@@ -1,14 +1,24 @@
-import { Image } from 'antd';
+import { Button, Image } from 'antd';
 import  { useState } from 'react';
 import { CalendarIcon, MoreIcon, WalletIcon } from '../../assets/icons';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Heading from '../../components/Heading';
+import { useQuery } from '@tanstack/react-query';
+import { instance } from '../../hooks/instance';
+import { useCookies } from 'react-cookie';
+
 
 const Home = () => {
   const [showInfo, setShowInfo] = useState(true);
+  const [cookie] = useCookies(['token'])
+  const {data} = useQuery({
+    queryKey: ['get-seller'],
+    queryFn: () => instance.get('/seller/me', {headers: {"Authorization": `Bearer ${cookie.token}` }}).then(res => res.data),
+    refetchOnMount: false
+  })
 
   return (
-    <div className="containers space-y-4 flex flex-col gap-[25px]">
+    <div className="containers space-y-4 flex flex-col gap-[10px]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-[40px] h-[40px]">
@@ -20,9 +30,9 @@ const Home = () => {
               height={40}
             />
           </div>
-          <h2>Username</h2>
+          <h2>{data?.data?.name}</h2>
         </div>
-        <CalendarIcon/>
+        <Button icon={<CalendarIcon/>} onClick={ ()=> location.pathname = "/calendar"}></Button>
       </div>
 
       <div className="w-[360px] h-[88px] bg-[#30AF49] rounded-[20px] p-4 relative text-white">
@@ -35,7 +45,7 @@ const Home = () => {
 
         {showInfo ? (
           <div className=' text-center'>
-            <p className="text-lg font-bold">135 214 200 so‘m</p>
+            <p className="text-lg font-bold">{data?.total_debt} so‘m</p>
             <p className="text-sm">Umumiy nasiya:</p>
           </div>
         ) : (
@@ -53,7 +63,7 @@ const Home = () => {
         </div>
         <div className='w-[170px] h-[127px] border-[1px] border-[#ECECEC] rounded-[16px] p-[16px] flex flex-col gap-[20px]'>
             <p>Mijozlar <br /> soni</p>
-            <Heading children='1' tag='h2' classList='text-[#30AF49]'/>
+            <Heading children={data?.debtors_count} tag='h2' classList='text-[#30AF49]'/>
         </div>
       </div>
 
@@ -64,7 +74,7 @@ const Home = () => {
             <WalletIcon/>
             <div>
               <p>Hisobingizda</p>
-              <Heading children='300 000 so‘m' tag='h1'/>
+              <Heading children={data?.data?.balance || 0 + " so'm"} tag='h1'/>
             </div>
           </div>
           <MoreIcon/>
