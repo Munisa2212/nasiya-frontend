@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import CustomSearch from "../../components/Search"
 import {  FilterIcon } from "../../assets/icons"
 import { useQuery } from "@tanstack/react-query"
@@ -8,15 +8,30 @@ import Heading from "../../components/Heading"
 import Text from "../../components/Text"
 import { Button } from "antd"
 import { UserAddOutlined } from "@ant-design/icons"
+import { NumberFormatter } from "../../hooks/numberFormatter"
+import { useDebounce } from "../../hooks/debounce"
 
 const Debtors = () => {
-  const [search, setSearch] = React.useState('')
+  const [search, setSearch] = React.useState("");
   const [cookie] = useCookies(['token'])
-  const {data} = useQuery({
-    queryKey: ['get-debtors'],
-    queryFn: () => instance.get('/debtor', {headers: {"Authorization": `Bearer ${cookie.token}` }}).then(res => res.data),
-    refetchOnMount: false
-  })
+  const [sortAsc, setSortAsc] = useState(false);
+
+  const debouncedSearch = useDebounce(search, 500);
+
+  const { data: filteredData } = useQuery({
+    queryKey: ["get-debtors", debouncedSearch, sortAsc], 
+    queryFn: () =>
+      instance
+        .get(
+          debouncedSearch
+            ? `/debtor?name=${debouncedSearch}&sort=${sortAsc ? "asc" : "desc"}`
+            : `/debtor?sort=${sortAsc ? "asc" : "desc"}`,
+          { headers: { Authorization: `Bearer ${cookie.token}` } }
+        )
+        .then((res) => res.data),
+    refetchOnMount: false,
+  });
+
 
   function total_debt(data: any){
     const total = data.reduce((acc: any, item: any) => acc + item.remaining_amount, 0);
@@ -26,20 +41,25 @@ const Debtors = () => {
   return (
     <div className="containers ">
       <div className="flex items-center justify-between mb-[30px]">
-        <CustomSearch value={search} onChange={setSearch}/>
-        <FilterIcon/>
+        <CustomSearch value={search} onChange={setSearch} />
+        <div
+          onClick={() => setSortAsc((prev) => !prev)}
+          className="cursor-pointer"
+        >
+          <FilterIcon />
+        </div>
       </div>
 
       <div>
-        {data?.data?.map((item: any) => (
-          <div key={item.id} className="flex gap-2 flex-col w-full bg-[#F6F6F6] p-[16px] rounded-[16px]">
+        {filteredData?.data?.map((item: any) => (
+          <div key={item.id} className="flex gap-2 flex-col w-full bg-[#F6F6F6] p-[16px] rounded-[16px] mb-5" onClick={() => location.pathname = `/debtors/${item.id}`}>
             <div className="mb-[16px]">
               <Heading children={item?.name} tag="h2"/>
               <Text children={item?.debtor_phone?.[0]?.phone || ''} classList="text-[#A3A3A3] !text-[14px]" />
             </div>
             <div>
               <Text children={"Jami nasiya:"} classList="text-[#A3A3A3] !text-[12px]" />
-              <Heading children={total_debt(item.credits) != 0 ? `-${total_debt(item.credits)} so'm` : "0 so'm"} classList={total_debt(item.credits) != 0 ? "text-[#F94D4D]" : ""} tag="h1"/>
+              <Heading children={total_debt(item.credits) != 0 ? `-${NumberFormatter(total_debt(item.credits))} so'm` : "0 so'm"} classList={total_debt(item.credits) != 0 ? "text-[#F94D4D]" : ""} tag="h1"/>
             </div>
           </div>
         ))}

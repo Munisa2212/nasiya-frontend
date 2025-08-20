@@ -2,7 +2,6 @@ import { ArrowLeftOutlined, LeftOutlined, RightOutlined } from "@ant-design/icon
 import Heading from "../../components/Heading"
 import { useNavigate } from "react-router-dom"
 import { Button } from "antd"
-import { Path } from "../../hooks/Path"
 import Text from "../../components/Text"
 import CustomCalendar from "../../components/Calendar"
 import React from "react"
@@ -36,7 +35,7 @@ const CalendarPage = () => {
   return (
     <div className="containers flex flex-col gap-[30px]">
       <div className="flex text-center gap-25 items-center">
-        <Button type="default" size="large" icon={<ArrowLeftOutlined />} className="text-[25px]" onClick={ () => navigate(Path.main) }/>
+        <Button type="default" size="large" icon={<ArrowLeftOutlined />} className="text-[25px]" onClick={ () => navigate(-1) }/>
         <Heading children="Kalendar" tag="h1"/>
       </div>
       <div>

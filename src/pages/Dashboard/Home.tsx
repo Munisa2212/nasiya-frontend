@@ -6,6 +6,8 @@ import Heading from '../../components/Heading';
 import { useQuery } from '@tanstack/react-query';
 import { instance } from '../../hooks/instance';
 import { useCookies } from 'react-cookie';
+import { NumberFormatter } from '../../hooks/numberFormatter';
+
 
 
 const Home = () => {
@@ -23,7 +25,7 @@ const Home = () => {
         <div className="flex items-center gap-2">
           <div className="w-[40px] h-[40px]">
             <Image
-              src="https://i.pinimg.com/736x/25/33/8f/25338f488af2c45912c15ebab325e363.jpg"
+              src={data?.data?.image ? data?.data?.image : "https://i.pinimg.com/736x/db/3a/62/db3a623acc8396fb285ec899ad01cd10.jpg"}
               alt="avatar"
               className="w-[40px] h-[40px] rounded-full"
               width={40}
@@ -45,7 +47,7 @@ const Home = () => {
 
         {showInfo ? (
           <div className=' text-center'>
-            <p className="text-lg font-bold">{data?.total_debt} so‘m</p>
+            <p className="text-lg font-bold">{NumberFormatter(data?.total_debt)} so‘m</p>
             <p className="text-sm">Umumiy nasiya:</p>
           </div>
         ) : (
